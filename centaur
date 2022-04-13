@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+
+from src.main import *
+from lib.banner import banner
+from datetime import datetime
+from lib.colors import red,white,red,reset, green
+
+print(banner)
+if __name__ == "__main__":	
+	while True:
+		try:
+			Centaur(args).on_start()
+			print(f"{white}[{green}.{white}] Stopped in {green}{datetime.now()-start}{white} seconds.{reset}")
+			break
+			
+		except KeyError:
+			exit(f"{white}[{red}#{white}] No additional information was found{reset}")
+			
+		except KeyboardInterrupt:
+			exit(f"\n{white}[{red}x{white}] Process interrupted with {red}Ctrl{white}+{red}C{reset}")
+			
+		except Exception as e:
+			print(f"{white}[{red}!{white}] Error: {red}{e}{reset}")

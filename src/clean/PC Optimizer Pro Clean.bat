@@ -1,14 +1,14 @@
 @echo off
-title PC Optimizer Pro
+title PC Cleaner Pro
 color 0b
 mode 1000
 cls
 goto ProgramStart
 
 :ProgramStart
-echo Thank you for using PC Optimizer Pro! 
-echo PC Optimizer Pro is software that helps clean up your PC.
-echo To start, PC Optimizer Pro would like to perform a scan. Allow?
+echo Thank you for using PC Cleaner Pro! 
+echo PC Cleaner Pro is software by Teapod that helps clean up your PC.
+echo To start, PC Cleaner Pro would like to perform a scan. Allow?
 set choice=
 set /p choice=Y or N?: 
 if NOT '%choice%'=='' set choice=%choice:~0,1%

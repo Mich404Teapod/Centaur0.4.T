@@ -1,7 +1,7 @@
-import faster_than_walk as ftw
+import Centaur04T as ckt
 
-print(ftw.walk("/tmp"))
+print(ckt.walk("/tmp"))
 
-print(ftw.walk_glob("/tmp/*.csv"))
+print(ckt.walk_glob("/tmp/*.csv"))
 
-print(ftw.walk_simple("/tmp"))
+print(ckt.walk_simple("/tmp"))

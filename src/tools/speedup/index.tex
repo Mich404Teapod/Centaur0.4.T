@@ -1,0 +1,270 @@
+% SPDX-License-Identifier: CC0-1.0
+
+\documentclass[12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage[colorlinks=false,linktoc=all]{hyperref}
+\usepackage[a4paper, margin=25mm]{geometry}
+\usepackage{tcolorbox}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage[type={CC},modifier={zero},version={1.0},lang=brazilian]{doclicense}
+
+\tcbset{colback=green!3!white,colframe=green!35!gray,fonttitle=\sc}
+
+\renewcommand{\arraystretch}{1.1}
+
+% Permite adicionar texto itálico com espaços e caracteres UTF-8 no modo matemático
+\newcommand{\Text}[1]{\textrm{\textit{#1}}}
+
+
+\title{Fórmulas para Avaliação de Desempenho de Processadores}
+\author{}
+\date{\the\month/\the\year}
+
+
+\begin{document}
+
+
+\maketitle
+
+\tableofcontents
+
+\vspace*{\fill}
+
+\doclicenseThis
+
+\newpage
+
+
+\section{Fundamentos}
+
+
+\subsection{Taxa e período do \textit{clock}}
+
+\[ \Text{taxa do clock} = \frac{1}{\Text{período do clock}} \]
+
+
+\subsection{Tempo de execução}
+
+Em sistemas modernos, processadores geralmente trabalham em várias tarefas simultaneamente. Isso faz com que o tempo aparente de execução de um programa não necessariamente reflita o seu custo computacional ou o desempenho do processador para aquela tarefa. Portanto, considere duas definições:
+
+\begin{description}
+  \item[Tempo real ou decorrido.] O tempo total para executar a tarefa específica, de início a fim.
+  \item[Tempo de CPU.] Apenas o tempo em que o processador computa, excluindo tempo de execução de outras tarefas ou espera por recursos, eventos externos e interação do usuário.
+\end{description}
+
+O tempo de execução a ser tratado nas próximas seções pode ser um destes, a depender do contexto. Em geral, o tempo de CPU é usado, com exceção de casos em que haja interesse em analisar o desempenho multitarefas do processador.
+
+
+%\subsection{Desempenho}
+%
+%\[ \Text{desempenho}_A = \frac{1}{\Text{tempo de execução}_A} \]
+
+
+\subsection[Prefixos de unidades do SI e IEC]{Prefixos do Sistema Internacional de Unidades (SI) e \textit{International Electrotechnical Commission} (IEC)}
+
+A comunidade científica, por meio do Sistemas Internacional, criou prefixos (constantes numéricas) para facilitar a representação de magnitudes muito grandes ou muito pequenas.
+
+Era comum usar-se os prefixos do SI para potências de 2, dada a proximidade entre \(10^3=1000\) e \(2^{10}=1024\). No entanto, essa diferença cresce exponencialmente conforme as potências aumentam, tornando os prefixos do SI inconvenientes e imprecisos nesse contexto. Por exemplo, existe um erro de apenas 2,4\% entre \(2^{10}\) e \(10^3\), porém o erro sobe para 15,3\% entre \(2^{60}\) e \(10^{18}\).
+
+Por esse motivo, houve um esforço (atual padrão IEC 80000-13) pela \textit{International Electrotechnical Commission} para convencionar constantes úteis no contexto da tecnologia da informação. A tabela~\ref{tab:prefixos} mostra os prefixos mais usados.
+
+\begin{table}[h]
+  \centering
+  \caption{Prefixos do SI vs. IEC.}\smallskip
+  \label{tab:prefixos}
+  \begin{tabular}{|ccl|ccc|} \hline
+    \multicolumn{3}{|c|}{SI}       & \multicolumn{3}{|c|}{IEC}   \\ \hline
+    Nome  & Símbolo & Valor        & Nome & Símbolo & Valor      \\ \hline
+%    \multicolumn{6}{c}{\textbf{. . .}} \\ \hline
+    yocto & y       & \(10^{-24}\) & ---  & ---     & ---        \\ %\hline
+    zepto & z       & \(10^{-21}\) & ---  & ---     & ---        \\ %\hline
+    atto  & a       & \(10^{-18}\) & ---  & ---     & ---        \\ %\hline
+    femto & f       & \(10^{-15}\) & ---  & ---     & ---        \\ %\hline
+    pico  & p       & \(10^{-12}\) & ---  & ---     & ---        \\ %\hline
+    nano  & n       & \(10^{-9}\)  & ---  & ---     & ---        \\ %\hline
+    micro & \(\mu\) & \(10^{-6}\)  & ---  & ---     & ---        \\ %\hline
+    mili  & m       & \(10^{-3}\)  & ---  & ---     & ---        \\ %\hline
+    kilo  & k       & \(10^3\)     & kibi & Ki      & \(2^{10}\) \\ %\hline % = 1024^1
+    mega  & M       & \(10^6\)     & mebi & Mi      & \(2^{20}\) \\ %\hline % = 1024^2
+    giga  & G       & \(10^9\)     & gibi & Gi      & \(2^{30}\) \\ %\hline % = 1024^3
+    tera  & T       & \(10^{12}\)  & tebi & Ti      & \(2^{40}\) \\ %\hline % = 1024^4
+    peta  & P       & \(10^{15}\)  & pebi & Pi      & \(2^{50}\) \\ %\hline % = 1024^5
+    exa   & E       & \(10^{18}\)  & exbi & Ei      & \(2^{60}\) \\ %\hline % = 1024^6
+    zetta & Z       & \(10^{21}\)  & zebi & Zi      & \(2^{70}\) \\ %\hline % = 1024^7
+    yotta & Y       & \(10^{24}\)  & yobi & Yi      & \(2^{80}\) \\ \hline % = 1024^8
+%    \multicolumn{6}{c}{\textbf{. . .}} \\
+  \end{tabular}
+\end{table}
+
+Há situações em que é preferível usar um conjunto de prefixos ao outro, devido à natureza dos valores tratados. Por exemplo:
+
+\begin{minipage}[t]{0.5\linewidth}
+SI
+\begin{itemize}
+  \item Grandezas das ciências da natureza
+  \item Largura de banda
+  \item Taxa de transferência
+  \item Tempo
+\end{itemize}
+\end{minipage}%
+\begin{minipage}[t]{0.5\linewidth}
+IEC
+\begin{itemize}
+  \item Capacidade de armazenamento
+\end{itemize}
+\end{minipage}
+
+\begin{tcolorbox}[title=Dicas,colback=black!3!white,colframe=black!25!white]
+  Caso esteja curioso: a letra \emph{i} em \emph{Ki}, \emph{Mi} etc. vem de \emph{b\textbf{i}nary}.
+  \tcblower
+  Quer um conselho? Não precisa pronunciar os nomes como a IEC definiu, apenas use os símbolos corretos.
+\end{tcolorbox}
+
+
+\section{\textit{Speedup}}
+
+
+\begin{tcolorbox}[title=Lembre-se]
+  \textit{speedup} é uma medida que varia de acordo com o código executado.
+\end{tcolorbox}
+
+\begin{equation} \label{eq:speedup}
+  \Text{speedup}_{A/B} =
+%  \frac{\Text{desempenho}_A}{\Text{desempenho}_B} =
+  \frac{\Text{tempo de execução}_B}{\Text{tempo de execução}_A}
+\end{equation}
+
+Lê-se \emph{\textit{speedup de A com relação a B}}. Alternativamente:
+
+\[
+  \Text{tempo de execução}_A
+  = \frac{\Text{tempo de execução}_B}{\Text{speedup}_{A/B}}
+\]
+
+%\[ \Text{desempenho}_A = \Text{speedup}_{A/B} \times \Text{desempenho}_B \]
+
+Dada a natureza do cálculo do \textit{speedup}, existe também a seguinte propriedade.
+
+\[ \Text{speedup}_{A/B} = \frac{1}{\Text{speedup}_{B/A}} \]
+
+
+\subsection{\textit{Speedup} calculado com modelo de referência}
+
+Considere dois processadores, \emph{A} e \emph{B}, e um programa \emph{P}. Deseja-se saber o valor de \( \Text{speedup}_{A/B} \) para \emph{P}, mas não se sabe os tempos de execução do programa em ambos os processadores.
+
+No entanto, existe um processador, \emph{X}, tal que \( \Text{speedup}_{A/X} \) e \( \Text{speedup}_{B/X} \) para \emph{P} são conhecidos. Nesta situação, pode-se aproveitar a seguinte propriedade.
+
+\begin{align*}
+  \Text{speedup}_{A/B}
+  &= \frac{\Text{tempo de execução}_B}{\Text{tempo de execução}_A} \\[\medskipamount]
+  &= \frac{\Text{tempo de execução}_X}{\Text{speedup}_{B/X}} \times
+     \frac{\Text{speedup}_{A/X}}{\Text{tempo de execução}_X}\\[\medskipamount]
+  &= \frac{\Text{speedup}_{A/X}}{\Text{speedup}_{B/X}}
+\end{align*}
+
+%\begin{align*}
+%  \Text{speedup}_{A/B}
+%  &= \frac{\Text{desempenho}_A}{\Text{desempenho}_B} \\[\medskipamount]
+%  &= \frac{
+%      \Text{speedup}_{A/X} \times \Text{desempenho}_X
+%    }{
+%      \Text{speedup}_{B/X} \times \Text{desempenho}_X
+%    } \\[\medskipamount]
+%  &= \frac{\Text{speedup}_{A/X}}{\Text{speedup}_{B/X}}
+%\end{align*}
+
+Isso significa que o \textit{speedup} de um processador com relação a outro pode ser obtido com apenas os respectivos \textit{speedups} destes com relação a um terceiro processador qualquer.
+
+
+\section{Ciclos por Instrução (CPI)}
+
+
+\begin{tcolorbox}[title=Lembre-se]
+  O CPI varia de acordo com o tipo de instrução executada.
+\end{tcolorbox}
+
+\begin{equation} \label{eq:numciclosclock}
+  \Text{nº de ciclos gastos} = \Text{nº de instruções executadas} \times \Text{CPI}
+\end{equation}
+
+
+\subsection{Cálculo do CPI médio}
+
+\begin{tcolorbox}[title=Lembre-se]
+  O CPI médio varia de acordo com o código executado.
+\end{tcolorbox}
+
+Considere:
+\begin{itemize}
+  \item \( C_i \): nº de instruções do tipo \emph{i} executadas
+  \item \( CPI_i \): nº de ciclos gastos com uma instrução do tipo \emph{i}
+  \item \( \Text{nº de ciclos gastos} = \sum_{\forall i} (C_i \times CPI_i) \)
+  \item \( \Text{nº de instruções executadas} = \sum_{\forall i} C_i \)
+\end{itemize}
+
+\[
+  CPI = \frac{\Text{nº de ciclos gastos}}{\Text{nº de instruções executadas}}
+  = \frac{\sum_{\forall i} (C_i \times CPI_i)}{\sum_{\forall i} C_i}
+\]
+
+Note que a equação acima é apenas a média ponderada dos CPI de cada tipo de instrução, onde os pesos são as proporções (\%) de cada tipo de instrução no código executado.
+
+
+\subsection{Instruções por ciclo (IPC)}
+
+Além do CPI, pode-se também analisar o desempenho considerando a razão IPC. A escolha é meramente arbitrária, e por vezes uma alternativa pode ser mais intuitiva que a outra.
+
+As equações mudam um pouco com IPC, mas basta lembrar que este é o inverso do CPI.
+
+\[ IPC = \frac{1}{CPI} \]
+
+
+\section{Equação de Desempenho do Processador}
+
+\begin{tcolorbox}[title=Lembre-se]
+  Um processador pode executar vários trechos de código ao mesmo tempo, sejam do seu programa ou não. Portanto, o tempo de CPU não inclui a execução de outros programas nem a espera por dispositivos de entrada e saída.
+\end{tcolorbox}
+
+\begin{align} \label{eq:tempocpu}
+  \Text{tempo}_{CPU} &= \Text{nº de ciclos gastos} \times \Text{período do clock} \\[\medskipamount]
+  &= \frac{\Text{nº de ciclos gastos}}{\Text{taxa do clock}} \nonumber
+\end{align}
+
+Substituindo a equação \ref{eq:numciclosclock} em \ref{eq:tempocpu}, obtemos
+
+\begin{align} \label{eq:desempenho}
+  \Text{tempo}_{CPU}
+  &= \Text{nº de instruções executadas} \times \Text{CPI} \times \Text{período do clock} \\[\medskipamount]
+  &= \frac{\Text{nº de instruções executadas} \times \Text{CPI}}{\Text{taxa do clock}} \nonumber
+\end{align}
+
+
+\section{Lei de Amdahl}
+
+
+Considere:
+\begin{itemize}
+  \item \(f \in [0, 1]\): fração do tempo de execução original afetada pela melhoria
+  \item \(p\): proporção da melhoria em comparação com o mesmo trecho da execução original
+\end{itemize}
+
+\begin{align} \label{eq:leiamdahl}
+  \Text{tempo com melhoria}
+  &= \Text{tempo sem melhoria}_\Text{não afetado}
+  + \frac{\Text{tempo sem melhoria}_\Text{afetado}}{\Text{proporção da melhoria}} \\[\medskipamount]\nonumber
+  &= \Text{tempo sem melhoria} \times (1 - f)
+  + \frac{\Text{tempo sem melhoria} \times f}{p}
+\end{align}
+
+Manipulando-se a equação \ref{eq:leiamdahl} com o tempo de execução original, encontramos uma nova equação.
+
+\begin{equation} \label{eq:speedupamdahl}
+  speedup = \frac{1}{(1 - f) + \frac{f}{p}}
+\end{equation}
+
+
+\end{document}
